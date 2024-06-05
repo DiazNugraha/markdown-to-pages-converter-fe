@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { enhance } from "$app/forms";
   import { writable } from "svelte/store";
 
   let isReady: boolean = false;
@@ -6,9 +7,28 @@
   let errorMessage: string | null = null;
   let fileInput: HTMLInputElement;
 
-  function handleSubmit() {
-    if (!isReady) return console.log("not ready");
-    console.log("Ready to submit ", file);
+  const apiUrl: string = import.meta.env.VITE_API_BASE_URL as string;
+
+  async function handleSubmit(e: {
+    action: URL;
+    formData: FormData;
+    formElement: HTMLFormElement;
+    controller: AbortController;
+    submitter: HTMLElement | null;
+    cancel(): void;
+  }) {
+    e.cancel();
+
+    if (!isReady || !$file) return console.log("not ready");
+    const formData = new FormData(e.formElement);
+    formData.append("file", $file);
+    const response = await fetch(`${apiUrl}/api/generate`, {
+      method: "POST",
+      body: formData,
+    });
+    if (response) {
+      console.log(response);
+    }
   }
 
   function handleLoad(
@@ -40,27 +60,26 @@
 
 <div class="container">
   <h1>Drop your files here</h1>
-  <div class="input-wrapper">
-    <input
-      type="file"
-      accept=".zip"
-      bind:value={$file}
-      bind:this={fileInput}
-      class="input-field"
-      class:active-read={isReady}
-      id=""
-      on:input={(e) => handleLoad(e)}
-    />
-    <button class="reset-button" on:click={() => handleReset()}>X</button>
-  </div>
-  {#if errorMessage}
-    <p class="error-message">{errorMessage}</p>
-  {/if}
-  {#if isReady}
-    <button class="action-button" on:click={() => handleSubmit()}>
-      Generate
-    </button>
-  {/if}
+  <form method="POST" class="form-wrapper" use:enhance={(e) => handleSubmit(e)}>
+    <div class="input-wrapper">
+      <input
+        type="file"
+        accept=".zip"
+        bind:value={$file}
+        bind:this={fileInput}
+        class="input-field"
+        class:active-read={isReady}
+        on:input={(e) => handleLoad(e)}
+      />
+      <button class="reset-button" on:click={() => handleReset()}>X</button>
+    </div>
+    {#if errorMessage}
+      <p class="error-message">{errorMessage}</p>
+    {/if}
+    {#if isReady}
+      <button class="action-button" type="submit"> Generate </button>
+    {/if}
+  </form>
 </div>
 
 <style>
@@ -125,5 +144,14 @@
 
   .error-message {
     color: red;
+  }
+
+  .form-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px 0;
   }
 </style>
