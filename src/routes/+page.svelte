@@ -60,10 +60,16 @@
 
 <div class="container">
   <h1>Drop your files here</h1>
-  <form method="POST" class="form-wrapper" use:enhance={(e) => handleSubmit(e)}>
+  <form
+    method="POST"
+    class="form-wrapper"
+    use:enhance={(e) => handleSubmit(e)}
+    enctype="multipart/form-data"
+  >
     <div class="input-wrapper">
       <input
         type="file"
+        name="file"
         accept=".zip"
         bind:value={$file}
         bind:this={fileInput}
