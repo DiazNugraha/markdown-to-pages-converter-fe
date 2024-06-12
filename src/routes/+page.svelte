@@ -27,7 +27,16 @@
       body: formData,
     });
     if (response) {
-      console.log(response);
+      const blob = await response.blob();
+
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "pages.zip"; 
+      document.body.appendChild(link);
+      link.click();
+      
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
     }
   }
 
