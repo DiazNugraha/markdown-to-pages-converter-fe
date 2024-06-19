@@ -1,56 +1,42 @@
 <script>
-  import "../app.css";
+  import Footer from "./Footer.svelte";
+  import Header from "./Header.svelte";
+  import "./styles.css";
 </script>
 
 <div class="container">
-  <div class="card-container">
-    <h1 class="title">
-      <a href="/" style="text-decoration: none; color: white">Page Maker</a>
-    </h1>
-    <div class="actions">
-      <a href="/about" class="nav-button">About</a>
-    </div>
-  </div>
-  <slot />
+  <Header />
+  <main class="content">
+    <slot />
+  </main>
+  <Footer />
 </div>
 
 <style>
   .container {
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
-
-  .card-container {
+  .content {
     width: 100%;
-    height: 100px;
-    background-color: #202020;
-    position: absolute;
-    top: 10px;
-    left: 0;
-    border: 1px solid black;
-    padding: 5px 20px;
-    border-radius: 20px;
+    height: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
   }
 
-  .actions {
+  main {
+    flex: 1;
     display: flex;
-    gap: 20px;
-  }
-
-  .nav-button {
-    text-decoration: none;
-    color: white;
-    font-size: 20px;
-    padding: 10px 20px;
-    background-color: transparent;
-    border-radius: 10px;
-  }
-
-  .nav-button:hover {
-    background-color: black;
+    flex-direction: column;
+    padding: 1rem;
+    width: 100%;
+    max-width: 64rem;
+    margin: 0 auto;
+    box-sizing: border-box;
   }
 </style>
